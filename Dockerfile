@@ -32,8 +32,10 @@ RUN SECRET_KEY=build-only-dummy-key DB_HOST=dummy DB_PASSWORD=dummy \
     python manage.py collectstatic --noinput
 
 # Create a non-root user and transfer ownership
+# Create a non-root user and transfer ownership
 RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
-RUN chown -R appuser:appgroup /app
+RUN mkdir -p /app/media /app/staticfiles \
+    && chown -R appuser:appgroup /app
 USER appuser
 
 EXPOSE 8000
