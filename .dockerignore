@@ -1,0 +1,41 @@
+# Git
+.git
+.gitignore
+
+# Python cache
+__pycache__
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info
+dist
+build
+
+# Virtual environments
+.venv
+venv
+env
+
+# Environment files — never bake secrets into the image
+.env
+
+# Static/media (mounted or collected at runtime)
+staticfiles/
+media/
+
+# Editor and OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Docker
+compose.yaml
+Dockerfile
+
+# Docs and misc
+README.md
+*.md
