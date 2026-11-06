@@ -3,8 +3,7 @@ set -e
 
 python manage.py migrate --noinput
 
-# Creates the admin on first run; does nothing if it already exists
-python manage.py createsuperuser --noinput || true
+python manage.py shell < create_admin.py
 
 exec gunicorn config.wsgi:application \
     --bind 0.0.0.0:${PORT:-8000} \
