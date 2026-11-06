@@ -15,4 +15,5 @@ else:
         email=os.environ.get("ADMIN_EMAIL", ""),
         role="admin",
     )
+    
     print("Superuser created")
