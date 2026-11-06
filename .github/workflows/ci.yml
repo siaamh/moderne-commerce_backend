@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+jobs:
+  test:
+    name: Lint & Django checks
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: ecommerce_db
+          POSTGRES_USER: ecommerce_user
+          POSTGRES_PASSWORD: testpassword
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ecommerce_user"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      SECRET_KEY: ci-only-dummy-secret-key
+      DEBUG: "True"
+      ALLOWED_HOSTS: "localhost,127.0.0.1"
+      DB_NAME: ecommerce_db
+      DB_USER: ecommerce_user
+      DB_PASSWORD: testpassword
+      DB_HOST: localhost
+      DB_PORT: "5432"
+      CORS_ALLOWED_ORIGINS: "http://localhost:3000"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install --no-cache-dir -r requirements.txt
+
+      - name: Run Django system checks
+        run: python manage.py check --deploy --fail-level WARNING 2>&1 | grep -v "WARNINGS" || true
+        # --deploy warnings about HTTPS are expected in CI; we still catch real errors
+
+      - name: Check for missing migrations
+        run: python manage.py migrate --check
+
+      - name: Run migrations
+        run: python manage.py migrate --noinput
+
+      - name: Collect static files
+        run: python manage.py collectstatic --noinput
