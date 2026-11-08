@@ -55,7 +55,7 @@ jobs:
         # --deploy warnings about HTTPS are expected in CI; we still catch real errors
 
       - name: Check for missing migrations
-        run: python manage.py migrate --check
+        run: python manage.py makemigrations --check --dry-run
 
       - name: Run migrations
         run: python manage.py migrate --noinput
