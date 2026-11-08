@@ -15,27 +15,27 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_DB: ${{ secrets.DB_NAME }}
-          POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DB_NAME || 'ecommerce_db' }}
+          POSTGRES_USER: ${{ secrets.DB_USER || 'ecommerce_user' }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD || 'ci_test_password' }}
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U ecommerce_user"
+          --health-cmd "pg_isready -U ${POSTGRES_USER:-ecommerce_user}"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
 
     env:
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      DEBUG: ${{ secrets.DEBUG }}
-      ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
-      DB_NAME: ${{ secrets.DB_NAME }}
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY || 'ci-only-dummy-secret-key' }}
+      DEBUG: ${{ secrets.DEBUG || 'True' }}
+      ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS || 'localhost,127.0.0.1' }}
+      DB_NAME: ${{ secrets.DB_NAME || 'ecommerce_db' }}
+      DB_USER: ${{ secrets.DB_USER || 'ecommerce_user' }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD || 'ci_test_password' }}
       DB_HOST: localhost
       DB_PORT: "5432"
-      CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
+      CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS || 'http://localhost:3000' }}
 
     steps:
       - name: Checkout code
