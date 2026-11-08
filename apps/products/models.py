@@ -236,5 +236,7 @@ class Discount(models.Model):
     @property
     def is_currently_active(self) -> bool:
         """True only if is_active and the current time is within the window."""
+        if not self.starts_at or not self.ends_at:
+            return False
         now = timezone.now()
         return bool(self.is_active and self.starts_at <= now < self.ends_at)
